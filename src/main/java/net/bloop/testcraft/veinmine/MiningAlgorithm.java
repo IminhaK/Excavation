@@ -29,7 +29,7 @@ public class MiningAlgorithm {
         int[] range = {0, -1 ,1};
         List<BlockPos> dummyBlocks = new ArrayList<>();
         boolean tooBig = false;
-        while(!blocksToBreak.equals(dummyBlocks) || !tooBig) {
+        while(!blocksToBreak.equals(dummyBlocks)) {
             dummyBlocks.clear();
             dummyBlocks.addAll(blocksToBreak);
             for (BlockPos p : dummyBlocks) {
@@ -46,7 +46,8 @@ public class MiningAlgorithm {
                 }
             }
             cleanOutTrash();
-            tooBig = blocksToBreak.size() < 100;
+            if(blocksToBreak.size() > 100)
+                break;
         }
         cleanOutTrash(); //security
     }
