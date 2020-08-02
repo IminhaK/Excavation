@@ -13,7 +13,7 @@ import java.util.Random;
 @Mod.EventBusSubscriber(modid = TestCraft.MODID)
 public class EventStuff {
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void breakEvent(BlockEvent.BreakEvent e) {
         PlayerEntity player = e.getPlayer();
 
@@ -23,18 +23,22 @@ public class EventStuff {
 
         player.sendMessage(ITextComponent.func_241827_a_(screaming), player.getGameProfile().getId());
 
-    }
+    }*/
 
     @SubscribeEvent
     public static void veinMine(BlockEvent.BreakEvent e) {
         PlayerEntity player = e.getPlayer();
+        World world = e.getWorld().getWorld();
         if(!player.isSneaking())
             return;
-        World world = e.getWorld().getWorld();
+        if(!world.getBlockState(e.getPos()).getBlock().canHarvestBlock(world.getBlockState(e.getPos()), world, e.getPos(), player))
+            return;
+
         MiningAlgorithm miningAlgorithm = new MiningAlgorithm(e.getPos(), world, player);
 
         miningAlgorithm.findBlocks();
 
+        System.out.println("Its time to b-b-b-b-break!");
         miningAlgorithm.mine();
     }
 
