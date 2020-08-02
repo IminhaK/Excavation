@@ -29,6 +29,7 @@ public class MiningAlgorithm {
         int[] range = {0, -1 ,1};
         List<BlockPos> dummyBlocks = new ArrayList<>();
         while(!blocksToBreak.equals(dummyBlocks)) {
+            dummyBlocks.clear();
             dummyBlocks.addAll(blocksToBreak);
             for (BlockPos p : dummyBlocks) {
                 for (int x : range) {
@@ -46,6 +47,8 @@ public class MiningAlgorithm {
 
             System.out.println("found some stuff:" + blocksToBreak);
             System.out.println(!blocksToBreak.equals(dummyBlocks));
+            System.out.println("DUMMY: " + dummyBlocks.toString());
+            System.out.println("DUMMY: " + blocksToBreak.toString());
             cleanOutTrash();
         }
     }
