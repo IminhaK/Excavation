@@ -28,7 +28,8 @@ public class MiningAlgorithm {
 
         int[] range = {0, -1 ,1};
         List<BlockPos> dummyBlocks = new ArrayList<>();
-        while(!blocksToBreak.equals(dummyBlocks)) {
+        boolean tooBig = false;
+        while(!blocksToBreak.equals(dummyBlocks) || !tooBig) {
             dummyBlocks.clear();
             dummyBlocks.addAll(blocksToBreak);
             for (BlockPos p : dummyBlocks) {
@@ -44,13 +45,10 @@ public class MiningAlgorithm {
                     }
                 }
             }
-
-            System.out.println("found some stuff:" + blocksToBreak);
-            System.out.println(!blocksToBreak.equals(dummyBlocks));
-            System.out.println("DUMMY: " + dummyBlocks.toString());
-            System.out.println("DUMMY: " + blocksToBreak.toString());
             cleanOutTrash();
+            tooBig = blocksToBreak.size() < 100;
         }
+        cleanOutTrash(); //security
     }
 
     public void mine() {
@@ -61,10 +59,11 @@ public class MiningAlgorithm {
                 System.out.println("ERROR BLOCK WAS MISSING");
             }
         }*/
+        for(BlockPos p : blocksToBreak)
+            world.destroyBlock(p, true);
     }
 
     private void cleanOutTrash() {
         blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
-        System.out.println("Remove all not-" + world.getBlockState(startingBlock).getBlock());
     }
 }
