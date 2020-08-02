@@ -2,18 +2,31 @@ package net.bloop.excavation;
 
 import net.bloop.excavation.ConfigHelper.ConfigValueListener;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Excavation.MODID)
 public class Excavation {
 
     public static final String MODID = "excavation";
+    public static final String NAME = "Excavation";
     public static ConfigImplementation config;
 
     public Excavation() {
         config = ConfigHelper.register(ModConfig.Type.SERVER, ConfigImplementation::new);
+        DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> clientStart());
+    }
+
+    private static void clientStart() {
+            MinecraftForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, FMLLoadCompleteEvent.class, fmlLoadCompleteEvent -> KeyBindings.init());
     }
 
     public static class ConfigImplementation {
