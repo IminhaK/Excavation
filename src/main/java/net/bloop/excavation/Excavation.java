@@ -1,24 +1,19 @@
-package net.bloop.testcraft;
+package net.bloop.excavation;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import net.bloop.testcraft.ConfigHelper.ConfigValueListener;
+import net.bloop.excavation.ConfigHelper.ConfigValueListener;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@Mod(TestCraft.MODID)
-public class TestCraft {
+@Mod(Excavation.MODID)
+public class Excavation {
 
-    public static final String MODID = "testcraft";
+    public static final String MODID = "excavation";
     public static ConfigImplementation config;
 
-    public TestCraft() {
+    public Excavation() {
         config = ConfigHelper.register(ModConfig.Type.SERVER, ConfigImplementation::new);
-
-        Registry.BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        Registry.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
     public static class ConfigImplementation {

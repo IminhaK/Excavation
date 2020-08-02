@@ -1,15 +1,12 @@
-package net.bloop.testcraft.veinmine;
+package net.bloop.excavation.veinmine;
 
-import net.bloop.testcraft.TestCraft;
+import net.bloop.excavation.Excavation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SMultiBlockChangePacket;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeHooks;
 
 import java.util.ArrayList;
@@ -53,7 +50,7 @@ public class MiningAlgorithm {
                 }
             }
             cleanOutTrash();
-            if(blocksToBreak.size() >= TestCraft.config.maxBlocks.get())
+            if(blocksToBreak.size() >= Excavation.config.maxBlocks.get())
                 break;
         }
         cleanOutTrash(); //security
@@ -82,7 +79,7 @@ public class MiningAlgorithm {
             System.out.println("The player is in survival: " + !player.isCreative());
             if(!player.isCreative()) {
                 System.out.println("We really do be breaking those blocks tho");
-                if(TestCraft.config.vacuumBlocks.get() == 0)
+                if(Excavation.config.vacuumBlocks.get() == 0)
                     block.harvestBlock(world, player, p, state, world.getTileEntity(p), player.getHeldItemMainhand());
                 else {
                     block.harvestBlock(world, player, playerPos, state, world.getTileEntity(p), player.getHeldItemMainhand());
