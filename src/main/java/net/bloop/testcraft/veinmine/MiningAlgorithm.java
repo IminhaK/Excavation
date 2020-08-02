@@ -6,8 +6,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.server.SMultiBlockChangePacket;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeHooks;
 
 import java.util.ArrayList;
@@ -51,7 +53,7 @@ public class MiningAlgorithm {
                 }
             }
             cleanOutTrash();
-            if(blocksToBreak.size() > TestCraft.config.maxBlocks.get())
+            if(blocksToBreak.size() >= TestCraft.config.maxBlocks.get())
                 break;
         }
         cleanOutTrash(); //security
@@ -60,6 +62,7 @@ public class MiningAlgorithm {
     private boolean tryBreak(BlockPos p) {
         BlockState state = world.getBlockState(p);
         Block block = state.getBlock();
+        BlockPos playerPos = new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ());
         int xp;
 
         if(world.isAirBlock(p))
@@ -68,25 +71,25 @@ public class MiningAlgorithm {
             return false;
 
         if(!world.isRemote) {
-            System.out.println("We do be on the server tho");
             xp = ForgeHooks.onBlockBreakEvent(world, player.interactionManager.getGameType(), player, p);
-            System.out.println("We do be spawning " + xp + " xp tho");
             if(xp == -1)
                 return false;
 
-            System.out.println("Is it removed by the player? Survey says " + !block.removedByPlayer(state, world, p, player, !player.isCreative(), state.getFluidState()));
             if(!block.removedByPlayer(state, world, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
             block.onPlayerDestroy(world, p, state);
 
+            System.out.println("The player is in survival: " + !player.isCreative());
             if(!player.isCreative()) {
                 System.out.println("We really do be breaking those blocks tho");
-                block.harvestBlock(world, player, p, state, world.getTileEntity(p), player.getHeldItemMainhand());
+                if(TestCraft.config.vacuumBlocks.get() == 0)
+                    block.harvestBlock(world, player, p, state, world.getTileEntity(p), player.getHeldItemMainhand());
+                else {
+                    block.harvestBlock(world, player, playerPos, state, world.getTileEntity(p), player.getHeldItemMainhand());
+                }
                 if(xp > 0)
                     block.dropXpOnBlockBreak(world, p, xp);
             }
-
-            player.connection.sendPacket(new SMultiBlockChangePacket());
         } else {
             if(!block.removedByPlayer(state, world, p, player, !player.isCreative(), state.getFluidState()))
                 return false;

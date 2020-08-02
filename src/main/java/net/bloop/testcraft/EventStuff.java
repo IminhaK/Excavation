@@ -8,8 +8,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import java.util.Random;
-
 @Mod.EventBusSubscriber(modid = TestCraft.MODID)
 public class EventStuff {
 
@@ -25,8 +23,12 @@ public class EventStuff {
 
     }*/
 
+    private static boolean alreadyBreaking = false;
+
     @SubscribeEvent
     public static void veinMine(BlockEvent.BreakEvent e) {
+        if(alreadyBreaking)
+            return;
         PlayerEntity player = e.getPlayer();
         World world = e.getWorld().getWorld();
         if(!player.isSneaking())
@@ -38,8 +40,9 @@ public class EventStuff {
 
         miningAlgorithm.findBlocks();
 
-        System.out.println("Its time to b-b-b-b-break!");
+        alreadyBreaking = true;
         miningAlgorithm.mine();
+        alreadyBreaking = false;
     }
 
 }
