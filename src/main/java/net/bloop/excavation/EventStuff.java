@@ -37,10 +37,10 @@ public class EventStuff {
         alreadyBreaking = false;
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void pressKey(InputEvent.KeyInputEvent e) {
         if(KeyBindings.mode.isPressed())
             System.out.println("HE DO BE PRESSIN THO");
-    }
+    }*/
 
 }
