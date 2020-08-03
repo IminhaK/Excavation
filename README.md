@@ -1,2 +1,2 @@
-# TestCraft
-1.16 minecraft modding
+# Excavation
+Repository for the Excavation mod for Minecraft 1.16.1
