@@ -18,7 +18,7 @@ public class EventStuff {
             return;
         PlayerEntity player = e.getPlayer();
         World world = e.getWorld().getWorld();
-        if(!player.isSneaking())
+        if(!(KeyBindings.excavate.isPressed()))
             return;
         if(!world.getBlockState(e.getPos()).getBlock().canHarvestBlock(world.getBlockState(e.getPos()), world, e.getPos(), player))
             return;

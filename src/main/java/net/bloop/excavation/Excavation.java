@@ -5,7 +5,6 @@ import net.bloop.excavation.ConfigHelper.ConfigValueListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -42,7 +41,7 @@ public class Excavation {
             this.maxBlocks = subscriber.subscribe(builder
                     .comment("Maximum Blocks")
                     .translation("config.max")
-                    .defineInRange("max", 64, 1, 256));
+                    .defineInRange("max", 64, 1, 1024));
             this.vacuumBlocks = subscriber.subscribe(builder
             .comment("All blocks are spawned under the player")
             .translation("config.vacuum")

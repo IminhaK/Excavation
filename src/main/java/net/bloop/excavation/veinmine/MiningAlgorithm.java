@@ -60,6 +60,7 @@ public class MiningAlgorithm {
                         }
                     }
                 }
+                //"Minesweeper" search pattern
                 /*for (Direction dir : Direction.values()) {
                     checking.setPos(p).move(dir); //each block thats touching the checked block
                     if (alreadyChecked.contains(checking.toImmutable()))
@@ -123,7 +124,6 @@ public class MiningAlgorithm {
         itemsToDrop.forEach(i -> dummyItemsToDrop.add(i.getItem()));
 
         for(ItemStack drop : drops) {
-            System.out.println("Does it already exist? " + dummyItemsToDrop.contains(drop.getItem()));
             if(dummyItemsToDrop.contains(drop.getItem())) {
                     oldCount = itemsToDrop.get(dummyItemsToDrop.indexOf(drop.getItem())).getCount();
                     extraCount = drop.getCount();
@@ -139,9 +139,8 @@ public class MiningAlgorithm {
     public void dropItems() {
         if(!world.isRemote && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS) && !world.restoringBlockSnapshots) {
             for (ItemStack item : itemsToDrop) {
-                System.out.println("Dropping " + item.getCount() + " " + item.getDisplayName().getString());
                 //Block.spawnAsEntity(world, playerPos, item);
-                ItemEntity itemEntity = new ItemEntity(world, playerPos.getX(), playerPos.getY(), playerPos.getZ(), item);
+                ItemEntity itemEntity = new ItemEntity(world, playerPos.getX() + 0.5, playerPos.getY() + 0.5, playerPos.getZ() + 0.5, item);
                 itemEntity.setDefaultPickupDelay();
                 world.addEntity(itemEntity);
             }
