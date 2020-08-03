@@ -3,12 +3,15 @@ package net.bloop.excavation.veinmine;
 import net.bloop.excavation.Excavation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeHooks;
@@ -37,8 +40,6 @@ public class MiningAlgorithm {
         itemsToDrop.add(ItemStack.EMPTY);
     }
 
-    //TODO: Optimize like minesweeper search pattern
-    //TODO: Reduce number of unique item entities dropped
     public void findBlocks() {
         BlockPos.Mutable checking = new BlockPos.Mutable();
 
@@ -74,7 +75,7 @@ public class MiningAlgorithm {
         cleanOutTrash(); //security
     }
 
-    private boolean tryBreak(BlockPos p) {
+    public boolean tryBreak(BlockPos p) {
         BlockState state = world.getBlockState(p);
         Block block = state.getBlock();
         int xp;
@@ -100,7 +101,6 @@ public class MiningAlgorithm {
                     addToDropsList(p, block, state);
                     player.addStat(Stats.BLOCK_MINED.get(block));
                     player.addExhaustion(0.005F);
-                    //block.harvestBlock(world, player, playerPos, state, world.getTileEntity(p), player.getHeldItemMainhand());
                 }
                 if(xp > 0)
                     totalXp += xp;
@@ -116,29 +116,37 @@ public class MiningAlgorithm {
 
     private void addToDropsList(BlockPos p, Block block, BlockState state) {
         List<ItemStack> drops = block.getDrops(state, (ServerWorld)world, p, world.getTileEntity(p), player, player.getHeldItemMainhand());
-        int searchingIndex;
-        List<ItemStack> dummyItemsToDrop = new ArrayList<>();
+        List<Item> dummyItemsToDrop = new ArrayList<>();
+        int oldCount;
+        int extraCount;
+
+        itemsToDrop.forEach(i -> dummyItemsToDrop.add(i.getItem()));
 
         for(ItemStack drop : drops) {
-            searchingIndex = 0;
-            dummyItemsToDrop.clear();
-            dummyItemsToDrop.addAll(itemsToDrop);
-            for(ItemStack existingItem : dummyItemsToDrop) {
-                //TODO: items get duped. fix
-                if(existingItem.getItem() == drop.getItem()) {
-                    itemsToDrop.get(searchingIndex).setCount(itemsToDrop.get(searchingIndex).getCount() + drop.getCount()); //add (amount of drop) to existing amount
-                } else {
-                    itemsToDrop.add(drop); //add another entry cuz it doesnt already exist
-                }
-                searchingIndex++;
+            System.out.println("Does it already exist? " + dummyItemsToDrop.contains(drop.getItem()));
+            if(dummyItemsToDrop.contains(drop.getItem())) {
+                    oldCount = itemsToDrop.get(dummyItemsToDrop.indexOf(drop.getItem())).getCount();
+                    extraCount = drop.getCount();
+                    itemsToDrop.get(dummyItemsToDrop.indexOf(drop.getItem())).setCount(oldCount + extraCount);
+            } else {
+                itemsToDrop.add(drop);
             }
         }
+
+        itemsToDrop.remove(ItemStack.EMPTY);
     }
 
-    private void dropItems() {
-        for(ItemStack item : itemsToDrop) {
-            Block.spawnAsEntity(world, playerPos, item);
+    public void dropItems() {
+        if(!world.isRemote && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS) && !world.restoringBlockSnapshots) {
+            for (ItemStack item : itemsToDrop) {
+                System.out.println("Dropping " + item.getCount() + " " + item.getDisplayName().getString());
+                //Block.spawnAsEntity(world, playerPos, item);
+                ItemEntity itemEntity = new ItemEntity(world, playerPos.getX(), playerPos.getY(), playerPos.getZ(), item);
+                itemEntity.setDefaultPickupDelay();
+                world.addEntity(itemEntity);
+            }
         }
+        itemsToDrop.clear();
     }
 
     private void cleanOutTrash() {

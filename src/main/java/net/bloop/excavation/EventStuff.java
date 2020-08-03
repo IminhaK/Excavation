@@ -29,6 +29,10 @@ public class EventStuff {
 
         alreadyBreaking = true;
         miningAlgorithm.mine();
+        e.setCanceled(true);
+        //reeeee just let me break you
+        miningAlgorithm.tryBreak(e.getPos());
+        miningAlgorithm.dropItems();
         alreadyBreaking = false;
     }
 
