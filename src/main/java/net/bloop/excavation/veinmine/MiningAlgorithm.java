@@ -1,6 +1,7 @@
 package net.bloop.excavation.veinmine;
 
 import net.bloop.excavation.Excavation;
+import net.bloop.excavation.event.ServerEvent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -17,7 +18,6 @@ import net.minecraftforge.common.ForgeHooks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MiningAlgorithm {
 
@@ -154,7 +154,6 @@ public class MiningAlgorithm {
     public void mine() {
         totalXp = 0;
         for(BlockPos p : blocksToBreak) {
-
             if(tryBreak(p)) {
                 if(!world.isRemote) {
                     if(player.getHeldItemMainhand().isDamageable()) {

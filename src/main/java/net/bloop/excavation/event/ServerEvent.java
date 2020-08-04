@@ -20,12 +20,15 @@ public class ServerEvent {
 
     @SubscribeEvent
     public static void veinMine(BlockEvent.BreakEvent e) {
-        if(alreadyBreaking)
-            return;
         PlayerEntity player = e.getPlayer();
         World world = e.getWorld().getWorld();
         BlockPos blockPos = e.getPos();
         Block block = world.getBlockState(blockPos).getBlock();
+        //checks once
+        if(player.getFoodStats().getFoodLevel() == 0)
+            return;
+        if(alreadyBreaking)
+            return;
 
         boolean correctTool = false;
         for(ToolType t : player.getHeldItemMainhand().getToolTypes()) {
@@ -65,5 +68,4 @@ public class ServerEvent {
     public static void setExcavationPressed(boolean pressed) {
         excavationPressed = pressed;
     }
-
 }
