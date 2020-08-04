@@ -157,11 +157,13 @@ public class MiningAlgorithm {
 
             if(tryBreak(p)) {
                 if(!world.isRemote) {
-                    if (player.getHeldItemMainhand().getDamage() < player.getHeldItemMainhand().getMaxDamage()) {
-                        player.getHeldItemMainhand().attemptDamageItem(1, player.getRNG(), player);
-                    } else {
-                        player.getHeldItemMainhand().shrink(1);
-                        break;
+                    if(player.getHeldItemMainhand().isDamageable()) {
+                        if (player.getHeldItemMainhand().getDamage() < player.getHeldItemMainhand().getMaxDamage()) {
+                            player.getHeldItemMainhand().attemptDamageItem(1, player.getRNG(), player);
+                        } else {
+                            player.getHeldItemMainhand().shrink(1);
+                            break;
+                        }
                     }
                 }
             }
