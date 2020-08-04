@@ -19,7 +19,7 @@ SOFTWARE.
 */
 //https://github.com/Commoble/configexample/tree/master/src/main/java/com/github/commoble/confighelper
 
-package net.bloop.excavation;
+package net.bloop.excavation.config;
 
 import java.util.ArrayList;
 import java.util.List;

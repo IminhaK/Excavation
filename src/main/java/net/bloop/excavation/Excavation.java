@@ -1,6 +1,7 @@
 package net.bloop.excavation;
 
-import net.bloop.excavation.ConfigHelper.ConfigValueListener;
+import net.bloop.excavation.config.ConfigHelper;
+import net.bloop.excavation.config.ConfigHelper.ConfigValueListener;
 
 import net.bloop.excavation.network.ExcavationPacketHandler;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,6 +40,7 @@ public class Excavation {
         public ConfigValueListener<Integer> maxBlocks;
         public ConfigValueListener<Integer> vacuumBlocks;
         public ConfigValueListener<Double> exhaustionMultiplier;
+        public ConfigValueListener<Integer> mineWithTool;
 
         public ConfigImplementation(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
             builder.push("General Category");
@@ -47,13 +49,17 @@ public class Excavation {
                     .translation("config.max")
                     .defineInRange("max", 64, 1, Integer.MAX_VALUE));
             this.vacuumBlocks = subscriber.subscribe(builder
-                    .comment("All blocks are spawned under the player (Integer)")
+                    .comment("All blocks are spawned under the player (0 false, 1 true)")
                     .translation("config.vacuum")
                     .defineInRange("vacuum", 1, 0, 1));
             this.exhaustionMultiplier = subscriber.subscribe(builder
                     .comment("Multiply the default Minecraft block exhaustion by this much (Double)")
                     .translation("config.exhaustion")
                     .defineInRange("exhaustion", 1.0, 0.0, Double.MAX_VALUE));
+            this.mineWithTool = subscriber.subscribe(builder
+                    .comment("Does the player need to mine with a valid tool? (0 false, 1 true)")
+                    .translation("config.tool")
+                    .defineInRange("tool", 0 , 0 ,1));
             builder.pop();
         }
     }

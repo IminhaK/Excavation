@@ -7,7 +7,6 @@ import net.bloop.excavation.network.PacketKeyIsDown;
 import net.bloop.excavation.network.PacketKeyIsUp;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -18,14 +17,13 @@ public class ClientEvent {
 
     @SubscribeEvent
     public static void pressKey(InputEvent.KeyInputEvent e) {
+        //press
         if(KeyBindings.excavate.isKeyDown() && !excavationPressed) {
             excavationPressed = true;
             ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsDown());
         }
-    }
 
-    @SubscribeEvent
-    public static void releaseKey(TickEvent.PlayerTickEvent e) {
+        //release
         if(!KeyBindings.excavate.isKeyDown() && excavationPressed) {
             excavationPressed = false;
             ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsUp());
