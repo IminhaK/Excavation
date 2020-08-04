@@ -1,8 +1,7 @@
 package net.bloop.excavation.event;
 
 import net.bloop.excavation.Excavation;
-import net.bloop.excavation.network.ExcavationPacketHandler;
-import net.bloop.excavation.network.PacketExcavate;
+import net.bloop.excavation.veinmine.MiningAlgorithm;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -32,8 +31,16 @@ public class ServerEvent {
         } else {
             alreadyBreaking = true;
             e.setCanceled(true);
-            //this line crashes v cuz it calls Minecraft on the server
-            ExcavationPacketHandler.INSTANCE.sendToServer(new PacketExcavate(blockPos));
+            //server does stuff here instead?
+            MiningAlgorithm miningAlgorithm = new MiningAlgorithm(blockPos, world, player);
+
+            miningAlgorithm.findBlocks();
+
+            miningAlgorithm.mine();
+            //reeeee just let me break you
+            miningAlgorithm.tryBreak(blockPos);
+            miningAlgorithm.dropItems();
+            setAlreadyBreaking(false);
         }
     }
 

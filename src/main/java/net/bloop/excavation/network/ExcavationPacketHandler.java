@@ -17,18 +17,6 @@ public class ExcavationPacketHandler {
         INSTANCE = NetworkRegistry.newSimpleChannel(new ResourceLocation(Excavation.MODID, "excavation"), () -> "1.0", s -> true, s -> true);
 
         INSTANCE.registerMessage(nextID(),
-                PacketExcavate.class,
-                PacketExcavate::toBytes,
-                PacketExcavate::new,
-                PacketExcavate::handle);
-
-        INSTANCE.registerMessage(nextID(),
-                PacketAlreadyMining.class,
-                PacketAlreadyMining::toBytes,
-                PacketAlreadyMining::new,
-                PacketAlreadyMining::handle);
-
-        INSTANCE.registerMessage(nextID(),
                 PacketKeyIsDown.class,
                 PacketKeyIsDown::toBytes,
                 PacketKeyIsDown::new,
