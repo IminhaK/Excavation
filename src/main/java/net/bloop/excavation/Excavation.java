@@ -43,15 +43,15 @@ public class Excavation {
         public ConfigImplementation(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
             builder.push("General Category");
             this.maxBlocks = subscriber.subscribe(builder
-                    .comment("Maximum Blocks")
+                    .comment("Maximum blocks to break with one excavation (Integer)")
                     .translation("config.max")
                     .defineInRange("max", 64, 1, Integer.MAX_VALUE));
             this.vacuumBlocks = subscriber.subscribe(builder
-                    .comment("All blocks are spawned under the player")
+                    .comment("All blocks are spawned under the player (Integer)")
                     .translation("config.vacuum")
                     .defineInRange("vacuum", 1, 0, 1));
             this.exhaustionMultiplier = subscriber.subscribe(builder
-                    .comment("Multiply the default Minecraft block exhaustion by this much.")
+                    .comment("Multiply the default Minecraft block exhaustion by this much (Double)")
                     .translation("config.exhaustion")
                     .defineInRange("exhaustion", 1.0, 0.0, Double.MAX_VALUE));
             builder.pop();
