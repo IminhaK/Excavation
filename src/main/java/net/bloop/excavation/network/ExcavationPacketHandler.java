@@ -27,5 +27,17 @@ public class ExcavationPacketHandler {
                 PacketAlreadyMining::toBytes,
                 PacketAlreadyMining::new,
                 PacketAlreadyMining::handle);
+
+        INSTANCE.registerMessage(nextID(),
+                PacketKeyIsDown.class,
+                PacketKeyIsDown::toBytes,
+                PacketKeyIsDown::new,
+                PacketKeyIsDown::handle);
+
+        INSTANCE.registerMessage(nextID(),
+                PacketKeyIsUp.class,
+                PacketKeyIsUp::toBytes,
+                PacketKeyIsUp::new,
+                PacketKeyIsUp::handle);
     }
 }

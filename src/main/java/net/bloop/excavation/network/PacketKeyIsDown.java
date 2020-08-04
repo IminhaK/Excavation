@@ -6,25 +6,22 @@ import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class PacketAlreadyMining {
+public class PacketKeyIsDown {
 
-    private final boolean alreadyMining;
 
-    public PacketAlreadyMining(PacketBuffer buf) {
-        alreadyMining = buf.readBoolean();
+    public PacketKeyIsDown(PacketBuffer buf) {
     }
 
-    public PacketAlreadyMining(boolean alreadyMining) {
-        this.alreadyMining = alreadyMining;
+    public PacketKeyIsDown() {
     }
 
     public void toBytes(PacketBuffer buf) {
-        buf.writeBoolean(alreadyMining);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerEvent.setAlreadyBreaking(alreadyMining);
-                });
+            System.out.println("KEY IS DOWN");
+            ServerEvent.setExcavationPressed(true);
+        });
     }
 }

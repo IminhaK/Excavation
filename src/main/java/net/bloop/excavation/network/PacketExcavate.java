@@ -1,6 +1,5 @@
 package net.bloop.excavation.network;
 
-import net.bloop.excavation.EventStuff;
 import net.bloop.excavation.veinmine.MiningAlgorithm;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
