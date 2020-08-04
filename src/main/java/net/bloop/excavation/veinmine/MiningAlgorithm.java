@@ -9,7 +9,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -101,7 +100,7 @@ public class MiningAlgorithm {
                 else {
                     addToDropsList(p, block, state);
                     player.addStat(Stats.BLOCK_MINED.get(block));
-                    player.addExhaustion(0.005F);
+                    player.addExhaustion((float)(0.005F * Excavation.config.exhaustionMultiplier.get()));
                 }
                 if(xp > 0)
                     totalXp += xp;

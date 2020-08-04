@@ -31,7 +31,6 @@ public class ServerEvent {
         } else {
             alreadyBreaking = true;
             e.setCanceled(true);
-            //server does stuff here instead?
             MiningAlgorithm miningAlgorithm = new MiningAlgorithm(blockPos, world, player);
 
             miningAlgorithm.findBlocks();
