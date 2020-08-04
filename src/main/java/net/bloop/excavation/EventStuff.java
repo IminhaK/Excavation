@@ -1,9 +1,10 @@
 package net.bloop.excavation;
 
-import net.bloop.excavation.veinmine.MiningAlgorithm;
+import net.bloop.excavation.network.ExcavationPacketHandler;
+import net.bloop.excavation.network.PacketExcavate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -19,28 +20,26 @@ public class EventStuff {
             return;
         PlayerEntity player = e.getPlayer();
         World world = e.getWorld().getWorld();
-        if(!(KeyBindings.excavate.isKeyDown()))
-            return;
+
         if(!world.getBlockState(e.getPos()).getBlock().canHarvestBlock(world.getBlockState(e.getPos()), world, e.getPos(), player))
             return;
 
-        MiningAlgorithm miningAlgorithm = new MiningAlgorithm(e.getPos(), world, player);
-
-        miningAlgorithm.findBlocks();
-
-        alreadyBreaking = true;
-        miningAlgorithm.mine();
-        e.setCanceled(true);
-        //reeeee just let me break you
-        miningAlgorithm.tryBreak(e.getPos());
-        miningAlgorithm.dropItems();
-        alreadyBreaking = false;
+        boolean singleplayer = Minecraft.getInstance().isSingleplayer() && !Minecraft.getInstance().getIntegratedServer().getPublic();
+        if(singleplayer) { //client
+            if(!(KeyBindings.excavate.isKeyDown())) {
+                return;
+            } else {
+                alreadyBreaking = true;
+                //send packet when the key is held down
+                e.setCanceled(true);
+                PacketExcavate exca = new PacketExcavate(e.getPos());
+                ExcavationPacketHandler.INSTANCE.sendToServer(exca);
+            }
+        }
     }
 
-    /*@SubscribeEvent
-    public static void pressKey(InputEvent.KeyInputEvent e) {
-        if(KeyBindings.mode.isPressed())
-            System.out.println("HE DO BE PRESSIN THO");
-    }*/
+    public static void setAlreadyBreaking(boolean breaking) {
+        alreadyBreaking = breaking;
+    }
 
 }

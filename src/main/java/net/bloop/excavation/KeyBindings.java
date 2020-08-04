@@ -14,7 +14,6 @@ public class KeyBindings {
     private static final String categoryName = Excavation.MODID + " (" + Excavation.NAME + ")";
 
     public static final KeyBinding excavate;
-    //public static final KeyBinding mode;
     private static final List<KeyBinding> allBindings;
 
     static InputMappings.Input getKey(int key) {
@@ -23,8 +22,7 @@ public class KeyBindings {
 
     static {
         allBindings = ImmutableList.of(
-                excavate = new KeyBinding("key.excavate.excavate", KeyConflictContext.IN_GAME, getKey(GLFW.GLFW_KEY_GRAVE_ACCENT), categoryName)//,
-                //mode = new KeyBinding("key.excavate.mode", KeyConflictContext.IN_GAME, getKey(GLFW.GLFW_KEY_R), categoryName)
+                excavate = new KeyBinding("key.excavate.excavate", KeyConflictContext.IN_GAME, getKey(GLFW.GLFW_KEY_GRAVE_ACCENT), categoryName)
         );
     }
 

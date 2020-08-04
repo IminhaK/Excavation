@@ -2,6 +2,7 @@ package net.bloop.excavation;
 
 import net.bloop.excavation.ConfigHelper.ConfigValueListener;
 
+import net.bloop.excavation.network.ExcavationPacketHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -24,6 +25,8 @@ public class Excavation {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         config = ConfigHelper.register(ModConfig.Type.SERVER, ConfigImplementation::new);
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> clientStart(modEventBus));
+
+        ExcavationPacketHandler.registerMessages();
     }
 
     private static void clientStart(IEventBus modEventBus) {
