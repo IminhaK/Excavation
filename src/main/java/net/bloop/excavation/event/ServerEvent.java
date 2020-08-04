@@ -1,12 +1,11 @@
 package net.bloop.excavation.event;
 
 import net.bloop.excavation.Excavation;
-import net.bloop.excavation.KeyBindings;
 import net.bloop.excavation.network.ExcavationPacketHandler;
 import net.bloop.excavation.network.PacketExcavate;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,19 +22,18 @@ public class ServerEvent {
             return;
         PlayerEntity player = e.getPlayer();
         World world = e.getWorld().getWorld();
+        BlockPos blockPos = e.getPos();
 
-        if(!world.getBlockState(e.getPos()).getBlock().canHarvestBlock(world.getBlockState(e.getPos()), world, e.getPos(), player))
+        if(!world.getBlockState(blockPos).getBlock().canHarvestBlock(world.getBlockState(blockPos), world, blockPos, player) || !world.isBlockLoaded(blockPos))
             return;
 
         if(!excavationPressed) {
             return;
         } else {
             alreadyBreaking = true;
-            System.out.println("SENDING!");
-            //send packet when the key is held down
             e.setCanceled(true);
-            ExcavationPacketHandler.INSTANCE.sendToServer(new PacketExcavate(e.getPos()));
-            //alredyBreaking = false; Sent back to client by PacketExcavate
+            //this line crashes v cuz it calls Minecraft on the server
+            ExcavationPacketHandler.INSTANCE.sendToServer(new PacketExcavate(blockPos));
         }
     }
 

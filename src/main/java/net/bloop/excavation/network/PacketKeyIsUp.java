@@ -19,7 +19,6 @@ public class PacketKeyIsUp {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            System.out.println("KEY IS UP");
             ServerEvent.setExcavationPressed(false);
         });
     }

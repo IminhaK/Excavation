@@ -27,9 +27,8 @@ public class ClientEvent {
     @SubscribeEvent
     public static void releaseKey(TickEvent.PlayerTickEvent e) {
         if(!KeyBindings.excavate.isKeyDown() && excavationPressed) {
-            System.out.println();
-            ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsUp());
             excavationPressed = false;
+            ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsUp());
         }
     }
 }

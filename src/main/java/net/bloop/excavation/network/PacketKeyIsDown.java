@@ -20,7 +20,6 @@ public class PacketKeyIsDown {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            System.out.println("KEY IS DOWN");
             ServerEvent.setExcavationPressed(true);
         });
     }
