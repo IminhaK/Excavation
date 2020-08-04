@@ -154,12 +154,16 @@ public class MiningAlgorithm {
     public void mine() {
         totalXp = 0;
         for(BlockPos p : blocksToBreak) {
-            if (p.equals(startingBlock))
-                continue;
 
             if(tryBreak(p)) {
-                if(!world.isRemote)
-                    player.getHeldItemMainhand().attemptDamageItem(1, new Random(), player);
+                if(!world.isRemote) {
+                    if (player.getHeldItemMainhand().getDamage() < player.getHeldItemMainhand().getMaxDamage()) {
+                        player.getHeldItemMainhand().attemptDamageItem(1, player.getRNG(), player);
+                    } else {
+                        player.getHeldItemMainhand().shrink(1);
+                        break;
+                    }
+                }
             }
 
         }

@@ -5,7 +5,6 @@ import net.bloop.excavation.config.Tags;
 import net.bloop.excavation.veinmine.MiningAlgorithm;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -41,9 +40,8 @@ public class ServerEvent {
             return;
         //check to see if world.getBlockState(blockPos).getBlock() is in the white/blacklist
         boolean blockIsAllowed = !Tags.blacklist.contains(block) && (Tags.whitelist.getAllElements().isEmpty() || Tags.whitelist.contains(block));
-        if(!blockIsAllowed) {
+        if(!blockIsAllowed)
             return;
-        }
 
 
         if(!excavationPressed) {
@@ -56,9 +54,6 @@ public class ServerEvent {
             miningAlgorithm.findBlocks();
 
             miningAlgorithm.mine();
-            //reeeee just let me break you
-            miningAlgorithm.tryBreak(blockPos);
-            miningAlgorithm.dropItems();
             setAlreadyBreaking(false);
         }
     }
