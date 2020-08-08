@@ -1,6 +1,7 @@
 package net.bloop.excavation.network;
 
 import net.bloop.excavation.event.ServerEvent;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 
@@ -19,7 +20,8 @@ public class PacketKeyIsUp {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerEvent.setExcavationPressed(false);
+            ServerPlayerEntity player = ctx.get().getSender();
+            ServerEvent.removePlayer(player.getUniqueID());
         });
     }
 }

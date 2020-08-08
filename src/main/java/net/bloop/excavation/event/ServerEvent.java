@@ -8,16 +8,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Mod.EventBusSubscriber(modid = Excavation.MODID)
 public class ServerEvent {
 
     private static boolean alreadyBreaking = false;
-    private static boolean excavationPressed = false;
+    public static Set<UUID> playersWithButtonDown = new HashSet<>();
 
     @SubscribeEvent
     public static void veinMine(BlockEvent.BreakEvent e) {
@@ -44,7 +47,7 @@ public class ServerEvent {
             return;
 
 
-        if(!excavationPressed) {
+        if(!playersWithButtonDown.contains(player.getUniqueID())) {
             return;
         } else {
             alreadyBreaking = true;
@@ -62,7 +65,13 @@ public class ServerEvent {
         alreadyBreaking = breaking;
     }
 
-    public static void setExcavationPressed(boolean pressed) {
-        excavationPressed = pressed;
+    public static void addPlayer(UUID uuid) {
+        System.out.println("adding " + uuid);
+        playersWithButtonDown.add(uuid);
+    }
+
+    public static void removePlayer(UUID uuid) {
+        System.out.println("removing " + uuid);
+        playersWithButtonDown.removeIf(u -> u.equals(uuid));
     }
 }
