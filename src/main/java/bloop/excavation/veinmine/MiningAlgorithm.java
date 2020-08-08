@@ -1,7 +1,6 @@
-package net.bloop.excavation.veinmine;
+package bloop.excavation.veinmine;
 
-import net.bloop.excavation.Excavation;
-import net.bloop.excavation.event.ServerEvent;
+import bloop.excavation.Excavation;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;

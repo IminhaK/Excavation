@@ -1,6 +1,6 @@
-package net.bloop.excavation.config;
+package bloop.excavation.config;
 
-import net.bloop.excavation.Excavation;
+import bloop.excavation.Excavation;
 import net.minecraft.block.Block;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;

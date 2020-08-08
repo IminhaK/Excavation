@@ -1,9 +1,8 @@
-package net.bloop.excavation;
+package bloop.excavation;
 
-import net.bloop.excavation.config.ConfigHelper;
-import net.bloop.excavation.config.ConfigHelper.ConfigValueListener;
+import bloop.excavation.config.ConfigHelper;
+import bloop.excavation.network.ExcavationPacketHandler;
 
-import net.bloop.excavation.network.ExcavationPacketHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -37,10 +36,10 @@ public class Excavation {
     }
 
     public static class ConfigImplementation {
-        public ConfigValueListener<Integer> maxBlocks;
-        public ConfigValueListener<Integer> vacuumBlocks;
-        public ConfigValueListener<Double> exhaustionMultiplier;
-        public ConfigValueListener<Integer> mineWithTool;
+        public ConfigHelper.ConfigValueListener<Integer> maxBlocks;
+        public ConfigHelper.ConfigValueListener<Integer> vacuumBlocks;
+        public ConfigHelper.ConfigValueListener<Double> exhaustionMultiplier;
+        public ConfigHelper.ConfigValueListener<Integer> mineWithTool;
 
         public ConfigImplementation(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
             builder.push("General Category");

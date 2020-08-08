@@ -1,8 +1,8 @@
-package net.bloop.excavation.event;
+package bloop.excavation.event;
 
-import net.bloop.excavation.Excavation;
-import net.bloop.excavation.config.Tags;
-import net.bloop.excavation.veinmine.MiningAlgorithm;
+import bloop.excavation.config.Tags;
+import bloop.excavation.veinmine.MiningAlgorithm;
+import bloop.excavation.Excavation;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;

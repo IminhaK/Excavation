@@ -1,4 +1,4 @@
-package net.bloop.excavation;
+package bloop.excavation;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.settings.KeyBinding;

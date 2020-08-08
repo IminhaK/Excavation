@@ -1,6 +1,6 @@
-package net.bloop.excavation.network;
+package bloop.excavation.network;
 
-import net.bloop.excavation.Excavation;
+import bloop.excavation.Excavation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
