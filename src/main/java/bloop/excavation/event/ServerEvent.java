@@ -69,12 +69,10 @@ public class ServerEvent {
     }
 
     public static void addPlayer(UUID uuid) {
-        System.out.println("adding " + uuid);
         playersWithButtonDown.add(uuid);
     }
 
     public static void removePlayer(UUID uuid) {
-        System.out.println("removing " + uuid);
         playersWithButtonDown.removeIf(u -> u.equals(uuid));
     }
 }
