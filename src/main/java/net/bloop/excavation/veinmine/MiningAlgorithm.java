@@ -82,7 +82,7 @@ public class MiningAlgorithm {
 
         if(world.isAirBlock(p))
             return false;
-        if(!ForgeHooks.canHarvestBlock(state, player, world, p))
+        if(!ForgeHooks.canHarvestBlock(state, player, world, p) && !player.isCreative())
             return false;
 
         if(!world.isRemote) {
@@ -156,7 +156,7 @@ public class MiningAlgorithm {
         for(BlockPos p : blocksToBreak) {
             if(tryBreak(p)) {
                 if(!world.isRemote) {
-                    if(player.getHeldItemMainhand().isDamageable()) {
+                    if(player.getHeldItemMainhand().isDamageable() && !player.isCreative()) {
                         if (player.getHeldItemMainhand().getDamage() < player.getHeldItemMainhand().getMaxDamage()) {
                             player.getHeldItemMainhand().attemptDamageItem(1, player.getRNG(), player);
                         } else {

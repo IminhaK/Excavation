@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -30,16 +31,12 @@ public class ServerEvent {
         if(alreadyBreaking)
             return;
 
-        boolean correctTool = false;
-        for(ToolType t : player.getHeldItemMainhand().getToolTypes()) {
-            if(t.equals(block.getHarvestTool(world.getBlockState(blockPos))))
-                correctTool = true;
-        }
+        boolean correctTool = ForgeHooks.canToolHarvestBlock(world, blockPos, player.getHeldItemMainhand());
 
-        if(!correctTool && Excavation.config.mineWithTool.get() == 1)
+        if(!correctTool && Excavation.config.mineWithTool.get() == 1 && !player.isCreative())
             return;
 
-        if(!world.getBlockState(blockPos).getBlock().canHarvestBlock(world.getBlockState(blockPos), world, blockPos, player) || !world.isBlockLoaded(blockPos))
+        if((!world.getBlockState(blockPos).getBlock().canHarvestBlock(world.getBlockState(blockPos), world, blockPos, player) && !player.isCreative()) || !world.isBlockLoaded(blockPos))
             return;
         //check to see if world.getBlockState(blockPos).getBlock() is in the white/blacklist
         boolean blockIsAllowed = !Tags.blacklist.contains(block) && (Tags.whitelist.getAllElements().isEmpty() || Tags.whitelist.contains(block));
