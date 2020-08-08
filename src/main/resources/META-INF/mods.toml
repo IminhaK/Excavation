@@ -12,10 +12,7 @@ loaderVersion="[32,)" #mandatory This is typically bumped every Minecraft versio
 modId="excavation" #mandatory
 version="${file.jarVersion}" #mandatory
 displayName="Excavation" #mandatory
- # The logo file
-logoFile="logo.png"
 authors="Bloop"
 description='''
-A simple vein excavation mod.
-'''
+A simple vein excavation mod.'''
 
