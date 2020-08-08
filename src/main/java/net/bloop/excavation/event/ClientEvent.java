@@ -29,4 +29,19 @@ public class ClientEvent {
             ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsUp());
         }
     }
+
+    @SubscribeEvent
+    public static void pressMouse(InputEvent.MouseInputEvent e) {
+        //press
+        if(KeyBindings.excavate.isKeyDown() && !excavationPressed) {
+            excavationPressed = true;
+            ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsDown());
+        }
+
+        //release
+        if(!KeyBindings.excavate.isKeyDown() && excavationPressed) {
+            excavationPressed = false;
+            ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsUp());
+        }
+    }
 }
