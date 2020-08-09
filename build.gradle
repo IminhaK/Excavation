@@ -45,7 +45,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                excvation {
+                excavation {
                     source sourceSets.main
                 }
             }
@@ -76,10 +76,10 @@ minecraft {
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
 
-            args '--mod', 'excvation', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'excavation', '--all', '--output', file('src/generated/resources/')
 
             mods {
-                excvation {
+                excavation {
                     source sourceSets.main
                 }
             }
@@ -117,7 +117,7 @@ dependencies {
 jar {
     manifest {
         attributes([
-            "Specification-Title": "excvation",
+            "Specification-Title": "excavation",
             "Specification-Vendor": "Bloop",
             "Specification-Version": "1", // We are version 1 of ourselves
             "Implementation-Title": project.name,
