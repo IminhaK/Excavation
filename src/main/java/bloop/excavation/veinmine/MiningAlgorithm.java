@@ -67,11 +67,11 @@ public class MiningAlgorithm {
                     alreadyChecked.add(checking.toImmutable());
                 }*/
             }
-            cleanOutTrash();
+            blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
             if(blocksToBreak.size() >= Excavation.config.maxBlocks.get())
                 break;
         }
-        cleanOutTrash(); //security
+        blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock()); //security
     }
 
     public boolean tryBreak(BlockPos p) {
@@ -138,16 +138,14 @@ public class MiningAlgorithm {
         if(!world.isRemote && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS) && !world.restoringBlockSnapshots) {
             for (ItemStack item : itemsToDrop) {
                 //Block.spawnAsEntity(world, playerPos, item);
-                ItemEntity itemEntity = new ItemEntity(world, playerPos.getX() + 0.5, playerPos.getY() + 0.5, playerPos.getZ() + 0.5, item);
-                itemEntity.setDefaultPickupDelay();
-                world.addEntity(itemEntity);
+                if(!player.inventory.addItemStackToInventory(item)) {
+                    ItemEntity itemEntity = new ItemEntity(world, playerPos.getX() + 0.5, playerPos.getY() + 0.5, playerPos.getZ() + 0.5, item);
+                    itemEntity.setDefaultPickupDelay();
+                    world.addEntity(itemEntity);
+                }
             }
         }
-        itemsToDrop.clear();
-    }
-
-    private void cleanOutTrash() {
-        blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
+        itemsToDrop.clear();blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
     }
 
     public void mine() {

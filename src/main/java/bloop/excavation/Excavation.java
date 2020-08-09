@@ -50,7 +50,7 @@ public class Excavation {
                     .translation("config.max")
                     .defineInRange("max", 64, 1, Integer.MAX_VALUE));
             this.vacuumBlocks = subscriber.subscribe(builder
-                    .comment("All blocks are spawned under the player (0 false, 1 true)")
+                    .comment("All blocks are placed in the player's inventory unless it is full (0 false [Will cause extra lag], 1 true)")
                     .translation("config.vacuum")
                     .defineInRange("vacuum", 1, 0, 1));
             this.exhaustionMultiplier = subscriber.subscribe(builder
