@@ -36,6 +36,12 @@ public class ServerEvent {
             return;
         if(player instanceof FakePlayer)
             return;
+        if(!(Excavation.config.crouchEnable.get() == 1 && player.isSneaking())) {
+            removePlayer(player.getUniqueID());
+            return;
+        } else {
+            addPlayer(player.getUniqueID());
+        }
 
         boolean correctTool = ForgeHooks.canToolHarvestBlock(world, blockPos, player.getHeldItemMainhand());
 
@@ -48,7 +54,6 @@ public class ServerEvent {
         boolean blockIsAllowed = !Tags.blacklist.contains(block) && (Tags.whitelist.getAllElements().isEmpty() || Tags.whitelist.contains(block));
         if(!blockIsAllowed)
             return;
-
 
         if(!playersWithButtonDown.contains(player.getUniqueID())) {
             return;

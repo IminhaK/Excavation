@@ -42,6 +42,7 @@ public class Excavation {
         public ConfigValueListener<Integer> vacuumBlocks;
         public ConfigValueListener<Double> exhaustionMultiplier;
         public ConfigValueListener<Integer> mineWithTool;
+        public ConfigValueListener<Integer> crouchEnable;
 
         public ConfigImplementation(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
             builder.push("General Category");
@@ -61,6 +62,10 @@ public class Excavation {
                     .comment("Does the player need to mine with a valid tool? (0 false, 1 true)")
                     .translation("config.tool")
                     .defineInRange("tool", 0 , 0 ,1));
+            this.crouchEnable = subscriber.subscribe(builder
+                    .comment("Disable the keybind and activate excavation by crouching. (0 false, 1 true)")
+                    .translation("config.crouch")
+                    .defineInRange("crouch", 0, 0 ,1));
             builder.pop();
         }
     }
