@@ -36,11 +36,13 @@ public class ServerEvent {
             return;
         if(player instanceof FakePlayer)
             return;
-        if(!(Excavation.config.crouchEnable.get() == 1 && player.isSneaking())) {
-            removePlayer(player.getUniqueID());
-            return;
-        } else {
-            addPlayer(player.getUniqueID());
+        if(Excavation.config.crouchEnable.get() == 1) {
+            if(!player.isSneaking()) {
+                removePlayer(player.getUniqueID());
+                return;
+            } else {
+                addPlayer(player.getUniqueID());
+            }
         }
 
         boolean correctTool = ForgeHooks.canToolHarvestBlock(world, blockPos, player.getHeldItemMainhand());

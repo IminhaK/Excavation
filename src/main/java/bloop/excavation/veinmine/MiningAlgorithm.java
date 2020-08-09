@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Stats;
@@ -157,6 +158,7 @@ public class MiningAlgorithm {
                         if (player.getHeldItemMainhand().getDamage() < player.getHeldItemMainhand().getMaxDamage()) {
                             player.getHeldItemMainhand().attemptDamageItem(1, player.getRNG(), player);
                         } else {
+                            player.sendBreakAnimation(EquipmentSlotType.MAINHAND);
                             player.getHeldItemMainhand().shrink(1);
                             break;
                         }
