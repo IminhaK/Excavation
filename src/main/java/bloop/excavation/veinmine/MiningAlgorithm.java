@@ -1,6 +1,7 @@
 package bloop.excavation.veinmine;
 
 import bloop.excavation.Excavation;
+import bloop.excavation.config.GroupFileReader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.item.ItemEntity;
@@ -52,7 +53,7 @@ public class MiningAlgorithm {
                     for (int y : range) {
                         for (int z : range) {
                             checking.setPos(p).move(x, y, z); //3x3x3
-                            if (alreadyChecked.contains(checking.toImmutable()))
+                            if (alreadyChecked.contains(checking))
                                 continue;
                             blocksToBreak.add(checking.toImmutable());
                             alreadyChecked.add(checking.toImmutable());
@@ -68,11 +69,28 @@ public class MiningAlgorithm {
                     alreadyChecked.add(checking.toImmutable());
                 }*/
             }
-            blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
+            String blockRegistryName = world.getBlockState(startingBlock).getBlock().getRegistryName().toString();
+            Boolean isBlockGrouped = GroupFileReader.groups.containsKey(blockRegistryName);
+            dummyBlocks.clear();
+            dummyBlocks.addAll(blocksToBreak);
+
+            if(isBlockGrouped) {
+                for(BlockPos pos : dummyBlocks) {
+                    boolean matches = false;
+                    for(Block block : GroupFileReader.groups.get(blockRegistryName)) {
+                        if(world.getBlockState(pos).getBlock() == block) {
+                            matches = true;
+                        }
+                    }
+                    if(!matches)
+                        blocksToBreak.remove(pos);
+                }
+            } else {
+                blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
+            }
             if(blocksToBreak.size() >= Excavation.config.maxBlocks.get())
                 break;
         }
-        blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock()); //security
     }
 
     public boolean tryBreak(BlockPos p) {
@@ -95,7 +113,7 @@ public class MiningAlgorithm {
             block.onPlayerDestroy(world, p, state);
 
             if(!player.isCreative()) {
-                if(Excavation.config.vacuumBlocks.get() == 0) //Causes extra lag
+                if(!Excavation.config.vacuumBlocks.get()) //Causes extra lag
                     block.harvestBlock(world, player, p, state, world.getTileEntity(p), player.getHeldItemMainhand());
                 else {
                     addToDropsList(p, block, state);
