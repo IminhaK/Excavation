@@ -36,7 +36,7 @@ public class ServerEvent {
             return;
         if(player instanceof FakePlayer)
             return;
-        if(Excavation.config.crouchEnable.get() == 1) {
+        if(Excavation.config.crouchEnable.get()) {
             if(!player.isSneaking()) {
                 removePlayer(player.getUniqueID());
                 return;
@@ -47,7 +47,7 @@ public class ServerEvent {
 
         boolean correctTool = ForgeHooks.canToolHarvestBlock(world, blockPos, player.getHeldItemMainhand());
 
-        if(!correctTool && Excavation.config.mineWithTool.get() == 1 && !player.isCreative())
+        if(!correctTool && Excavation.config.mineWithTool.get() && !player.isCreative())
             return;
 
         if((!world.getBlockState(blockPos).getBlock().canHarvestBlock(world.getBlockState(blockPos), world, blockPos, player) && !player.isCreative()) || !world.isBlockLoaded(blockPos))

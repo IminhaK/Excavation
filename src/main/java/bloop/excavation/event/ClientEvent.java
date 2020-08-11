@@ -17,7 +17,7 @@ public class ClientEvent {
 
     @SubscribeEvent
     public static void pressKey(InputEvent.KeyInputEvent e) {
-        boolean crouchingEnabled = Excavation.config.crouchEnable.get() == 1;
+        boolean crouchingEnabled = Excavation.config.crouchEnable.get();
 
         //press
         if((KeyBindings.excavate.isKeyDown() && !crouchingEnabled) && !excavationPressed) {
@@ -34,7 +34,7 @@ public class ClientEvent {
 
     @SubscribeEvent
     public static void pressMouse(InputEvent.MouseInputEvent e) {
-        boolean crouchingEnabled = Excavation.config.crouchEnable.get() == 1;
+        boolean crouchingEnabled = Excavation.config.crouchEnable.get();
 
         //press
         if((KeyBindings.excavate.isKeyDown() && !crouchingEnabled) && !excavationPressed) {

@@ -25,7 +25,7 @@ public class Excavation {
 
     public Excavation() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        config = ConfigHelper.register(ModConfig.Type.SERVER, ConfigImplementation::new);
+        config = ConfigHelper.register(ModConfig.Type.COMMON, ConfigImplementation::new);
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> clientStart(modEventBus));
 
         ExcavationPacketHandler.registerMessages();
@@ -39,33 +39,35 @@ public class Excavation {
 
     public static class ConfigImplementation {
         public ConfigValueListener<Integer> maxBlocks;
-        public ConfigValueListener<Integer> vacuumBlocks;
+        public ConfigValueListener<Boolean> vacuumBlocks;
         public ConfigValueListener<Double> exhaustionMultiplier;
-        public ConfigValueListener<Integer> mineWithTool;
-        public ConfigValueListener<Integer> crouchEnable;
+        public ConfigValueListener<Boolean> mineWithTool;
+        public ConfigValueListener<Boolean> crouchEnable;
 
         public ConfigImplementation(ForgeConfigSpec.Builder builder, ConfigHelper.Subscriber subscriber) {
-            builder.push("General Category");
+            builder.push("client");
+            this.crouchEnable = subscriber.subscribe(builder
+                    .comment("Disable the keybind and activate excavation by crouching.")
+                    .translation("config.crouch")
+                    .define("crouch", false));
+            builder.pop();
+            builder.push("server");
             this.maxBlocks = subscriber.subscribe(builder
                     .comment("Maximum blocks to break with one excavation (Integer)")
                     .translation("config.max")
                     .defineInRange("max", 64, 1, Integer.MAX_VALUE));
             this.vacuumBlocks = subscriber.subscribe(builder
-                    .comment("All blocks are placed in the player's inventory unless it is full (0 false [Will cause extra lag], 1 true)")
+                    .comment("All blocks are placed in the player's inventory unless it is full (False [Will cause extra lag])")
                     .translation("config.vacuum")
-                    .defineInRange("vacuum", 1, 0, 1));
+                    .define("vacuum", true));
+            this.mineWithTool = subscriber.subscribe(builder
+                    .comment("Does the player need to mine with a valid tool?")
+                    .translation("config.tool")
+                    .define("tool", false));
             this.exhaustionMultiplier = subscriber.subscribe(builder
                     .comment("Multiply the default Minecraft block exhaustion by this much (Double)")
                     .translation("config.exhaustion")
                     .defineInRange("exhaustion", 1.0, 0.0, Double.MAX_VALUE));
-            this.mineWithTool = subscriber.subscribe(builder
-                    .comment("Does the player need to mine with a valid tool? (0 false, 1 true)")
-                    .translation("config.tool")
-                    .defineInRange("tool", 0 , 0 ,1));
-            this.crouchEnable = subscriber.subscribe(builder
-                    .comment("Disable the keybind and activate excavation by crouching. (0 false, 1 true)")
-                    .translation("config.crouch")
-                    .defineInRange("crouch", 0, 0 ,1));
             builder.pop();
         }
     }
