@@ -113,6 +113,7 @@ public class MiningAlgorithm {
             block.onPlayerDestroy(world, p, state);
 
             if(!player.isCreative()) {
+                System.out.println("Vacuum mode: " + Excavation.config.vacuumBlocks.get());
                 if(!Excavation.config.vacuumBlocks.get()) //Causes extra lag
                     block.harvestBlock(world, player, p, state, world.getTileEntity(p), player.getHeldItemMainhand());
                 else {

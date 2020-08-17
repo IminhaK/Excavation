@@ -45,8 +45,7 @@ public class ServerEvent {
             }
         }
 
-        boolean correctTool = ForgeHooks.canToolHarvestBlock(world, blockPos, player.getHeldItemMainhand());
-
+        boolean correctTool = ForgeHooks.canHarvestBlock(world.getBlockState(blockPos), player, world, blockPos);
         if(!correctTool && Excavation.config.mineWithTool.get() && !player.isCreative())
             return;
 
