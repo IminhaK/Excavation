@@ -164,7 +164,7 @@ public class MiningAlgorithm {
                 }
             }
         }
-        itemsToDrop.clear();blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
+        itemsToDrop.clear();
     }
 
     public void mine() {
