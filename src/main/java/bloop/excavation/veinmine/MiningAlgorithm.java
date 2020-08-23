@@ -70,7 +70,7 @@ public class MiningAlgorithm {
                 }*/
             }
             String blockRegistryName = world.getBlockState(startingBlock).getBlock().getRegistryName().toString();
-            Boolean isBlockGrouped = GroupFileReader.groups.containsKey(blockRegistryName);
+            boolean isBlockGrouped = GroupFileReader.groups.containsKey(blockRegistryName);
             dummyBlocks.clear();
             dummyBlocks.addAll(blocksToBreak);
 
