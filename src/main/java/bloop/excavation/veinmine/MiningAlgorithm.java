@@ -11,7 +11,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
@@ -23,14 +22,14 @@ import java.util.List;
 
 public class MiningAlgorithm {
 
-    private List<BlockPos> blocksToBreak = new ArrayList<>();
-    private BlockPos startingBlock;
-    private List<BlockPos> alreadyChecked = new ArrayList<>();
-    private World world;
-    private ServerPlayerEntity player;
+    private final List<BlockPos> blocksToBreak = new ArrayList<>();
+    private final BlockPos startingBlock;
+    private final List<BlockPos> alreadyChecked = new ArrayList<>();
+    private final World world;
+    private final ServerPlayerEntity player;
     private int totalXp = 0;
-    private BlockPos playerPos;
-    private List<ItemStack> itemsToDrop = new ArrayList<>();
+    private final BlockPos playerPos;
+    private final List<ItemStack> itemsToDrop = new ArrayList<>();
 
     public MiningAlgorithm(BlockPos start, World worldIn, PlayerEntity playerIn) {
         world = worldIn;
@@ -38,6 +37,7 @@ public class MiningAlgorithm {
         playerPos = new BlockPos(player.getX(), player.getY(), player.getZ());
         startingBlock = start;
         blocksToBreak.add(start);
+        alreadyChecked.add(start);
         itemsToDrop.add(ItemStack.EMPTY);
     }
 
@@ -61,7 +61,7 @@ public class MiningAlgorithm {
                         }
                     }
                 }
-                //"Minesweeper" search pattern
+                //"Minesweeper" search pattern aka only touching
                 /*for (Direction dir : Direction.values()) {
                     checking.setPos(p).move(dir); //each block thats touching the checked block
                     if (alreadyChecked.contains(checking.toImmutable()))
@@ -71,7 +71,6 @@ public class MiningAlgorithm {
                 }*/
             }
             String blockRegistryName = world.getBlockState(startingBlock).getBlock().getRegistryName().toString();
-            //boolean isBlockGrouped = GroupFileReader.groups.containsKey(blockRegistryName); //TODO:v
             dummyBlocks.clear();
             dummyBlocks.addAll(blocksToBreak);
 
@@ -89,10 +88,14 @@ public class MiningAlgorithm {
             } else {
                 blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
             }*/
-            blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock()); //TODO:^
-            if(blocksToBreak.size() >= Excavation.config.maxBlocks.get())
+
+            blocksToBreak.removeIf(p -> !world.getBlockState(startingBlock).getBlock().equals(world.getBlockState(p).getBlock()));
+            if(blocksToBreak.size() >= Excavation.config.maxBlocks.get()) {
+                blocksToBreak.subList(Excavation.config.maxBlocks.get(), blocksToBreak.size()).clear();
                 break;
+            }
         }
+        blocksToBreak.forEach(p -> System.out.println("Block type first: " + world.getBlockState(p).getBlock()));
     }
 
     public boolean tryBreak(BlockPos p) {
@@ -100,8 +103,10 @@ public class MiningAlgorithm {
         Block block = state.getBlock();
         int xp;
 
-        if(block.equals(Blocks.AIR))
+        if(block.equals(Blocks.AIR)) {
+            world.setBlock(p, Blocks.BLUE_WOOL.defaultBlockState(), 0);
             return false;
+        }
         if(!ForgeHooks.canHarvestBlock(state, player, world, p) && !player.isCreative())
             return false;
 
@@ -112,7 +117,7 @@ public class MiningAlgorithm {
 
             if(!block.removedByPlayer(state, world, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
-            //block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());//TODO:find what this is doing
+            //block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
 
             if(!player.isCreative()) {
                 if(!Excavation.config.vacuumBlocks.get()) //Causes extra lag
@@ -128,7 +133,7 @@ public class MiningAlgorithm {
         } else {
             if(!block.removedByPlayer(state, world, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
-            block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());//TODO:find what this is doing
+            block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem()); //Simulate breaking client side?
         }
 
         return true;
@@ -158,7 +163,6 @@ public class MiningAlgorithm {
     public void dropItems() {
         if(!world.isClientSide() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !world.restoringBlockSnapshots) {
             for (ItemStack item : itemsToDrop) {
-                //Block.spawnAsEntity(world, playerPos, item);
                 if(!player.inventory.add(item)) {
                     ItemEntity itemEntity = new ItemEntity(world, playerPos.getX() + 0.5, playerPos.getY() + 0.5, playerPos.getZ() + 0.5, item);
                     itemEntity.setDefaultPickUpDelay();
@@ -172,6 +176,7 @@ public class MiningAlgorithm {
     public void mine() {
         totalXp = 0;
         for(BlockPos p : blocksToBreak) {
+            System.out.println("Block type second: " + world.getBlockState(p).getBlock());
             if(tryBreak(p)) {
                 if(!world.isClientSide()) {
                     ItemStack mh = player.getMainHandItem();
