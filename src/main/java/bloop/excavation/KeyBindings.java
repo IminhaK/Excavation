@@ -11,13 +11,13 @@ import java.util.List;
 
 public class KeyBindings {
 
-    private static final String categoryName = Excavation.MODID + " (" + Excavation.NAME + ")";
+    private static final String categoryName = Excavation.NAME;
 
     public static final KeyBinding excavate;
     private static final List<KeyBinding> allBindings;
 
     static InputMappings.Input getKey(int key) {
-        return InputMappings.Type.KEYSYM.getOrMakeInput(key);
+        return InputMappings.Type.KEYSYM.getOrCreate(key);
     }
 
     static {

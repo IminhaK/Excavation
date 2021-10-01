@@ -26,22 +26,22 @@ public class ServerEvent {
     @SubscribeEvent
     public static void veinMine(BlockEvent.BreakEvent e) {
         PlayerEntity player = e.getPlayer();
-        World world = e.getWorld().getWorld();
+        World world = e.getPlayer().level;
         BlockPos blockPos = e.getPos();
         Block block = world.getBlockState(blockPos).getBlock();
         //checks once
-        if(player.getFoodStats().getFoodLevel() == 0)
+        if(player.getFoodData().getFoodLevel() == 0)
             return;
         if(alreadyBreaking)
             return;
         if(player instanceof FakePlayer)
             return;
         if(Excavation.config.crouchEnable.get()) {
-            if(!player.isSneaking()) {
-                removePlayer(player.getUniqueID());
+            if(!player.isCrouching()) {
+                removePlayer(player.getUUID());
                 return;
             } else {
-                addPlayer(player.getUniqueID());
+                addPlayer(player.getUUID());
             }
         }
 
@@ -49,14 +49,14 @@ public class ServerEvent {
         if(!correctTool && Excavation.config.mineWithTool.get() && !player.isCreative())
             return;
 
-        if((!world.getBlockState(blockPos).getBlock().canHarvestBlock(world.getBlockState(blockPos), world, blockPos, player) && !player.isCreative()) || !world.isBlockLoaded(blockPos))
+        if((!world.getBlockState(blockPos).getBlock().canHarvestBlock(world.getBlockState(blockPos), world, blockPos, player) && !player.isCreative()) || !world.isLoaded(blockPos))
             return;
         //check to see if world.getBlockState(blockPos).getBlock() is in the white/blacklist
-        boolean blockIsAllowed = !Tags.blacklist.contains(block) && (Tags.whitelist.getAllElements().isEmpty() || Tags.whitelist.contains(block));
+        boolean blockIsAllowed = !Tags.blacklist.contains(block) && (Tags.whitelist.getValues().isEmpty() || Tags.whitelist.contains(block));
         if(!blockIsAllowed)
             return;
 
-        if(!playersWithButtonDown.contains(player.getUniqueID())) {
+        if(!playersWithButtonDown.contains(player.getUUID())) {
             return;
         } else {
             alreadyBreaking = true;

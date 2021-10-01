@@ -20,13 +20,13 @@ public class ClientEvent {
         boolean crouchingEnabled = Excavation.config.crouchEnable.get();
 
         //press
-        if((KeyBindings.excavate.isKeyDown() && !crouchingEnabled) && !excavationPressed) {
+        if((KeyBindings.excavate.isDown() && !crouchingEnabled) && !excavationPressed) {
             excavationPressed = true;
             ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsDown());
         }
 
         //release
-        if((!KeyBindings.excavate.isKeyDown() && !crouchingEnabled) && excavationPressed) {
+        if((!KeyBindings.excavate.isDown() && !crouchingEnabled) && excavationPressed) {
             excavationPressed = false;
             ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsUp());
         }
@@ -37,13 +37,13 @@ public class ClientEvent {
         boolean crouchingEnabled = Excavation.config.crouchEnable.get();
 
         //press
-        if((KeyBindings.excavate.isKeyDown() && !crouchingEnabled) && !excavationPressed) {
+        if((KeyBindings.excavate.isDown() && !crouchingEnabled) && !excavationPressed) {
             excavationPressed = true;
             ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsDown());
         }
 
         //release
-        if((!KeyBindings.excavate.isKeyDown() && !crouchingEnabled) && excavationPressed) {
+        if((!KeyBindings.excavate.isDown() && !crouchingEnabled) && excavationPressed) {
             excavationPressed = false;
             ExcavationPacketHandler.INSTANCE.sendToServer(new PacketKeyIsUp());
         }

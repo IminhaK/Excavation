@@ -20,7 +20,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public class Excavation {
 
     public static final String MODID = "excavation";
-    public static final String NAME = "Excavation";
+    public static final String NAME = "excavation.name";
     public static ConfigImplementation config;
 
     public Excavation() {
