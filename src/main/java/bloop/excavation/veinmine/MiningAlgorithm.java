@@ -70,7 +70,6 @@ public class MiningAlgorithm {
                     alreadyChecked.add(checking.toImmutable());
                 }*/
             }
-            String blockRegistryName = world.getBlockState(startingBlock).getBlock().getRegistryName().toString();
             dummyBlocks.clear();
             dummyBlocks.addAll(blocksToBreak);
 
