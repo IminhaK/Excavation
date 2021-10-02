@@ -21,7 +21,7 @@ public class PacketKeyIsUp {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
-            ServerEvent.removePlayer(player.getUniqueID());
+            ServerEvent.removePlayer(player.getUUID());
         });
     }
 }

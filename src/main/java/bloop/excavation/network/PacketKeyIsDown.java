@@ -22,7 +22,7 @@ public class PacketKeyIsDown {
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
             ServerPlayerEntity player = ctx.get().getSender();
-            ServerEvent.addPlayer(player.getUniqueID());
+            ServerEvent.addPlayer(player.getUUID());
         });
     }
 }

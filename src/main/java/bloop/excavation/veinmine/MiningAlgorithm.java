@@ -1,9 +1,9 @@
 package bloop.excavation.veinmine;
 
 import bloop.excavation.Excavation;
-import bloop.excavation.config.GroupFileReader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -22,21 +22,22 @@ import java.util.List;
 
 public class MiningAlgorithm {
 
-    private List<BlockPos> blocksToBreak = new ArrayList<>();
-    private BlockPos startingBlock;
-    private List<BlockPos> alreadyChecked = new ArrayList<>();
-    private World world;
-    private ServerPlayerEntity player;
+    private final List<BlockPos> blocksToBreak = new ArrayList<>();
+    private final BlockPos startingBlock;
+    private final List<BlockPos> alreadyChecked = new ArrayList<>();
+    private final World world;
+    private final ServerPlayerEntity player;
     private int totalXp = 0;
-    private BlockPos playerPos;
-    private List<ItemStack> itemsToDrop = new ArrayList<>();
+    private final BlockPos playerPos;
+    private final List<ItemStack> itemsToDrop = new ArrayList<>();
 
     public MiningAlgorithm(BlockPos start, World worldIn, PlayerEntity playerIn) {
         world = worldIn;
         player = (ServerPlayerEntity)playerIn;
-        playerPos = new BlockPos(player.getPosX(), player.getPosY(), player.getPosZ());
+        playerPos = new BlockPos(player.getX(), player.getY(), player.getZ());
         startingBlock = start;
         blocksToBreak.add(start);
+        alreadyChecked.add(start);
         itemsToDrop.add(ItemStack.EMPTY);
     }
 
@@ -52,15 +53,15 @@ public class MiningAlgorithm {
                 for (int x : range) {
                     for (int y : range) {
                         for (int z : range) {
-                            checking.setPos(p).move(x, y, z); //3x3x3
+                            checking.set(p).move(x, y, z); //3x3x3
                             if (alreadyChecked.contains(checking))
                                 continue;
-                            blocksToBreak.add(checking.toImmutable());
-                            alreadyChecked.add(checking.toImmutable());
+                            blocksToBreak.add(checking.immutable());
+                            alreadyChecked.add(checking.immutable());
                         }
                     }
                 }
-                //"Minesweeper" search pattern
+                //"Minesweeper" search pattern aka only touching
                 /*for (Direction dir : Direction.values()) {
                     checking.setPos(p).move(dir); //each block thats touching the checked block
                     if (alreadyChecked.contains(checking.toImmutable()))
@@ -69,12 +70,10 @@ public class MiningAlgorithm {
                     alreadyChecked.add(checking.toImmutable());
                 }*/
             }
-            String blockRegistryName = world.getBlockState(startingBlock).getBlock().getRegistryName().toString();
-            boolean isBlockGrouped = GroupFileReader.groups.containsKey(blockRegistryName);
             dummyBlocks.clear();
             dummyBlocks.addAll(blocksToBreak);
 
-            if(isBlockGrouped) {
+            /*if(isBlockGrouped) { //TODO:Remove and replace with oredictionary
                 for(BlockPos pos : dummyBlocks) {
                     boolean matches = false;
                     for(Block block : GroupFileReader.groups.get(blockRegistryName)) {
@@ -87,10 +86,15 @@ public class MiningAlgorithm {
                 }
             } else {
                 blocksToBreak.removeIf(p -> world.getBlockState(startingBlock).getBlock() != world.getBlockState(p).getBlock());
-            }
-            if(blocksToBreak.size() >= Excavation.config.maxBlocks.get())
+            }*/
+
+            blocksToBreak.removeIf(p -> !world.getBlockState(startingBlock).getBlock().equals(world.getBlockState(p).getBlock()));
+            if(blocksToBreak.size() >= Excavation.config.maxBlocks.get()) {
+                blocksToBreak.subList(Excavation.config.maxBlocks.get(), blocksToBreak.size()).clear();
                 break;
+            }
         }
+        blocksToBreak.forEach(p -> System.out.println("Block type first: " + world.getBlockState(p).getBlock()));
     }
 
     public boolean tryBreak(BlockPos p) {
@@ -98,27 +102,29 @@ public class MiningAlgorithm {
         Block block = state.getBlock();
         int xp;
 
-        if(world.isAirBlock(p))
+        if(block.equals(Blocks.AIR)) {
+            world.setBlock(p, Blocks.BLUE_WOOL.defaultBlockState(), 0);
             return false;
+        }
         if(!ForgeHooks.canHarvestBlock(state, player, world, p) && !player.isCreative())
             return false;
 
-        if(!world.isRemote) {
-            xp = ForgeHooks.onBlockBreakEvent(world, player.interactionManager.getGameType(), player, p);
+        if(!world.isClientSide()) {
+            xp = ForgeHooks.onBlockBreakEvent(world, player.gameMode.getGameModeForPlayer(), player, p);
             if(xp == -1)
                 return false;
 
             if(!block.removedByPlayer(state, world, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
-            block.onPlayerDestroy(world, p, state);
+            //block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
 
             if(!player.isCreative()) {
                 if(!Excavation.config.vacuumBlocks.get()) //Causes extra lag
-                    block.harvestBlock(world, player, p, state, world.getTileEntity(p), player.getHeldItemMainhand());
+                    block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
                 else {
                     addToDropsList(p, block, state);
-                    player.addStat(Stats.BLOCK_MINED.get(block));
-                    player.addExhaustion((float)(0.005F * Excavation.config.exhaustionMultiplier.get()));
+                    player.awardStat(Stats.BLOCK_MINED.get(block));
+                    player.causeFoodExhaustion((float)(0.005F * Excavation.config.exhaustionMultiplier.get()));
                 }
                 if(xp > 0)
                     totalXp += xp;
@@ -126,14 +132,14 @@ public class MiningAlgorithm {
         } else {
             if(!block.removedByPlayer(state, world, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
-            block.onPlayerDestroy(world, p, state);
+            block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem()); //Simulate breaking client side?
         }
 
         return true;
     }
 
     private void addToDropsList(BlockPos p, Block block, BlockState state) {
-        List<ItemStack> drops = block.getDrops(state, (ServerWorld)world, p, world.getTileEntity(p), player, player.getHeldItemMainhand());
+        List<ItemStack> drops = block.getDrops(state, (ServerWorld)world, p, world.getBlockEntity(p), player, player.getMainHandItem());
         List<Item> dummyItemsToDrop = new ArrayList<>();
         int oldCount;
         int extraCount;
@@ -154,13 +160,12 @@ public class MiningAlgorithm {
     }
 
     public void dropItems() {
-        if(!world.isRemote && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS) && !world.restoringBlockSnapshots) {
+        if(!world.isClientSide() && world.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !world.restoringBlockSnapshots) {
             for (ItemStack item : itemsToDrop) {
-                //Block.spawnAsEntity(world, playerPos, item);
-                if(!player.inventory.addItemStackToInventory(item)) {
+                if(!player.inventory.add(item)) {
                     ItemEntity itemEntity = new ItemEntity(world, playerPos.getX() + 0.5, playerPos.getY() + 0.5, playerPos.getZ() + 0.5, item);
-                    itemEntity.setDefaultPickupDelay();
-                    world.addEntity(itemEntity);
+                    itemEntity.setDefaultPickUpDelay();
+                    world.addFreshEntity(itemEntity);
                 }
             }
         }
@@ -170,14 +175,18 @@ public class MiningAlgorithm {
     public void mine() {
         totalXp = 0;
         for(BlockPos p : blocksToBreak) {
+            System.out.println("Block type second: " + world.getBlockState(p).getBlock());
             if(tryBreak(p)) {
-                if(!world.isRemote) {
-                    if(player.getHeldItemMainhand().isDamageable() && !player.isCreative()) {
-                        if (player.getHeldItemMainhand().getDamage() < player.getHeldItemMainhand().getMaxDamage()) {
-                            player.getHeldItemMainhand().attemptDamageItem(1, player.getRNG(), player);
+                if(!world.isClientSide()) {
+                    ItemStack mh = player.getMainHandItem();
+                    if(mh.isDamageableItem() && !player.isCreative()) {
+                        if (mh.getDamageValue() < mh.getMaxDamage()) {
+                            mh.hurt(1, player.getRandom(), player);
                         } else {
-                            player.sendBreakAnimation(EquipmentSlotType.MAINHAND);
-                            player.getHeldItemMainhand().shrink(1);
+                            //player.sendBreakAnimation(EquipmentSlotType.MAINHAND);
+                            //player.getHeldItemMainhand().shrink(1);
+                            mh.hurtAndBreak(1, player, player ->
+                                    player.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
                             break;
                         }
                     }
@@ -185,8 +194,9 @@ public class MiningAlgorithm {
             }
 
         }
-        if(!world.isRemote)
+        if(!world.isClientSide())
             dropItems();
-        world.getBlockState(startingBlock).getBlock().dropXpOnBlockBreak(world, playerPos, totalXp);
+        //world.getBlockState(startingBlock).getBlock().dropXpOnBlockBreak(world, playerPos, totalXp);
+        world.getBlockState(startingBlock).getBlock().popExperience((ServerWorld)world, playerPos, totalXp);
     }
 }
