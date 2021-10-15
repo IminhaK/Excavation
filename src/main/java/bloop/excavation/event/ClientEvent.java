@@ -1,10 +1,10 @@
 package bloop.excavation.event;
 
+import bloop.excavation.KeyBindings;
 import bloop.excavation.network.ExcavationPacketHandler;
 import bloop.excavation.network.PacketKeyIsDown;
 import bloop.excavation.network.PacketKeyIsUp;
 import bloop.excavation.Excavation;
-import bloop.excavation.KeyBindings;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
