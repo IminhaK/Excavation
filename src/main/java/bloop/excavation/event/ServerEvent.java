@@ -3,10 +3,10 @@ package bloop.excavation.event;
 import bloop.excavation.config.Tags;
 import bloop.excavation.veinmine.MiningAlgorithm;
 import bloop.excavation.Excavation;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.world.BlockEvent;
@@ -25,10 +25,10 @@ public class ServerEvent {
 
     @SubscribeEvent
     public static void veinMine(BlockEvent.BreakEvent e) {
-        PlayerEntity player = e.getPlayer();
-        World world = e.getPlayer().level;
+        Player player = e.getPlayer();
+        Level level = e.getPlayer().level;
         BlockPos blockPos = e.getPos();
-        Block block = world.getBlockState(blockPos).getBlock();
+        Block block = level.getBlockState(blockPos).getBlock();
         //checks once
         if(player.getFoodData().getFoodLevel() == 0)
             return;
@@ -45,23 +45,21 @@ public class ServerEvent {
             }
         }
 
-        boolean correctTool = ForgeHooks.canHarvestBlock(world.getBlockState(blockPos), player, world, blockPos);
+        boolean correctTool = ForgeHooks.isCorrectToolForDrops(level.getBlockState(blockPos), player);
         if(!correctTool && Excavation.config.mineWithTool.get() && !player.isCreative())
             return;
 
-        if((!world.getBlockState(blockPos).getBlock().canHarvestBlock(world.getBlockState(blockPos), world, blockPos, player) && !player.isCreative()) || !world.isLoaded(blockPos))
+        if((!level.getBlockState(blockPos).getBlock().canHarvestBlock(level.getBlockState(blockPos), level, blockPos, player) && !player.isCreative()) || !level.isLoaded(blockPos))
             return;
-        //check to see if world.getBlockState(blockPos).getBlock() is in the white/blacklist
+        //check to see if level.getBlockState(blockPos).getBlock() is in the white/blacklist
         boolean blockIsAllowed = !Tags.blacklist.contains(block) && (Tags.whitelist.getValues().isEmpty() || Tags.whitelist.contains(block));
         if(!blockIsAllowed)
             return;
 
-        if(!playersWithButtonDown.contains(player.getUUID())) {
-            return;
-        } else {
+        if(playersWithButtonDown.contains(player.getUUID())) {
             alreadyBreaking = true;
             e.setCanceled(true);
-            MiningAlgorithm miningAlgorithm = new MiningAlgorithm(blockPos, world, player);
+            MiningAlgorithm miningAlgorithm = new MiningAlgorithm(blockPos, level, player);
 
             miningAlgorithm.findBlocks();
 

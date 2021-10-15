@@ -1,27 +1,27 @@
 package bloop.excavation.network;
 
 import bloop.excavation.event.ServerEvent;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class PacketKeyIsDown {
 
 
-    public PacketKeyIsDown(PacketBuffer buf) {
+    public PacketKeyIsDown(FriendlyByteBuf buf) {
     }
 
     public PacketKeyIsDown() {
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ServerPlayerEntity player = ctx.get().getSender();
+            ServerPlayer player = ctx.get().getSender();
             ServerEvent.addPlayer(player.getUUID());
         });
     }
