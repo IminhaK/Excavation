@@ -175,7 +175,6 @@ public class MiningAlgorithm {
     public void mine() {
         totalXp = 0;
         for(BlockPos p : blocksToBreak) {
-            System.out.println("Block type second: " + world.getBlockState(p).getBlock());
             if(tryBreak(p)) {
                 if(!world.isClientSide()) {
                     ItemStack mh = player.getMainHandItem();
