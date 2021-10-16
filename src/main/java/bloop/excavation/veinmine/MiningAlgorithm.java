@@ -103,7 +103,6 @@ public class MiningAlgorithm {
         int xp;
 
         if(block.equals(Blocks.AIR)) {
-            world.setBlock(p, Blocks.BLUE_WOOL.defaultBlockState(), 0);
             return false;
         }
         if(!ForgeHooks.canHarvestBlock(state, player, world, p) && !player.isCreative())
