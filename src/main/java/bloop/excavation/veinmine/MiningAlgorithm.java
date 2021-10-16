@@ -94,7 +94,6 @@ public class MiningAlgorithm {
                 break;
             }
         }
-        blocksToBreak.forEach(p -> System.out.println("Block type first: " + world.getBlockState(p).getBlock()));
     }
 
     public boolean tryBreak(BlockPos p) {
