@@ -112,7 +112,7 @@ public class MiningAlgorithm {
             if(xp == -1)
                 return false;
 
-            if(!block.removedByPlayer(state, level, p, player, !player.isCreative(), state.getFluidState()))
+            if(!block.onDestroyedByPlayer(state, level, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
             //block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
 
@@ -128,7 +128,7 @@ public class MiningAlgorithm {
                     totalXp += xp;
             }
         } else {
-            if(!block.removedByPlayer(state, level, p, player, !player.isCreative(), state.getFluidState()))
+            if(!block.onDestroyedByPlayer(state, level, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
             block.playerDestroy(level, player, p, state, level.getBlockEntity(p), player.getMainHandItem()); //Simulate breaking client side?
         }
