@@ -117,8 +117,11 @@ public class MiningAlgorithm {
             //block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
 
             if(!player.isCreative()) {
-                if(!Excavation.config.vacuumBlocks.get()) //Causes extra lag
+                if(!Excavation.config.vacuumBlocks.get()) { //Causes extra lag
                     block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
+                    //Extra exhaustion (playerDestroy always does 0.005F)
+                    player.causeFoodExhaustion((float)((0.005F * Excavation.config.exhaustionMultiplier.get())) - 0.005F);
+                }
                 else {
                     addToDropsList(p, block, state);
                     player.awardStat(Stats.BLOCK_MINED.get(block));
