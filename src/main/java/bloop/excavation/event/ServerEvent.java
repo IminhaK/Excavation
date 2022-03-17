@@ -4,6 +4,7 @@ import bloop.excavation.config.Tags;
 import bloop.excavation.veinmine.MiningAlgorithm;
 import bloop.excavation.Excavation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -30,14 +31,14 @@ public class ServerEvent {
         BlockPos blockPos = e.getPos();
         Block block = level.getBlockState(blockPos).getBlock();
         //checks once
-        if(player.getFoodData().getFoodLevel() == 0)
+        if (player.getFoodData().getFoodLevel() == 0)
             return;
-        if(alreadyBreaking)
+        if (alreadyBreaking)
             return;
-        if(player instanceof FakePlayer)
+        if (player instanceof FakePlayer)
             return;
-        if(Excavation.config.crouchEnable.get()) {
-            if(!player.isCrouching()) {
+        if (Excavation.config.crouchEnable.get()) {
+            if (!player.isCrouching()) {
                 removePlayer(player.getUUID());
                 return;
             } else {
@@ -46,13 +47,16 @@ public class ServerEvent {
         }
 
         boolean correctTool = ForgeHooks.isCorrectToolForDrops(level.getBlockState(blockPos), player);
-        if(!correctTool && Excavation.config.mineWithTool.get() && !player.isCreative())
+        if (!correctTool && Excavation.config.mineWithTool.get() && !player.isCreative())
             return;
 
-        if((!level.getBlockState(blockPos).getBlock().canHarvestBlock(level.getBlockState(blockPos), level, blockPos, player) && !player.isCreative()) || !level.isLoaded(blockPos))
+        if ((!level.getBlockState(blockPos).getBlock().canHarvestBlock(level.getBlockState(blockPos), level, blockPos, player) && !player.isCreative()) || !level.isLoaded(blockPos))
             return;
         //check to see if level.getBlockState(blockPos).getBlock() is in the white/blacklist
-        boolean blockIsAllowed = !Tags.blacklist.contains(block) && (Tags.whitelist.getValues().isEmpty() || Tags.whitelist.contains(block));
+        //boolean blockIsAllowed = !Tags.blacklist.getValues().contains(block) && (Tags.whitelist.getValues().isEmpty() || Tags.whitelist.getValues().contains(block));
+        boolean blockIsAllowed = !block.builtInRegistryHolder().is(Tags.blacklist) &&
+                ((Registry.BLOCK.getTag(Tags.whitelist).map(tag -> tag.size() == 0).orElse(false))
+                || block.builtInRegistryHolder().is(Tags.whitelist));
         if(!blockIsAllowed)
             return;
 
