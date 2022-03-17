@@ -55,8 +55,7 @@ public class ServerEvent {
         //check to see if level.getBlockState(blockPos).getBlock() is in the white/blacklist
         //boolean blockIsAllowed = !Tags.blacklist.getValues().contains(block) && (Tags.whitelist.getValues().isEmpty() || Tags.whitelist.getValues().contains(block));
         boolean blockIsAllowed = !block.builtInRegistryHolder().is(Tags.blacklist) &&
-                ((Registry.BLOCK.getTag(Tags.whitelist).map(tag -> tag.size() == 0).orElse(false))
-                || block.builtInRegistryHolder().is(Tags.whitelist));
+                (Registry.BLOCK.getTag(Tags.whitelist).map(tag -> tag.size() == 0 || tag.contains(block.builtInRegistryHolder())).orElse(false));
         if(!blockIsAllowed)
             return;
 
