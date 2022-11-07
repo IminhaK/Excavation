@@ -16,7 +16,7 @@ public class ClientEvent {
 
     private static boolean excavationPressed = false;
 
-    @Mod.EventBusSubscriber(modid = Excavation.MODID, value = Dist.CLIENT)
+    @Mod.EventBusSubscriber(modid = Excavation.MODID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientForgeEvents {
         @SubscribeEvent
         public static void onKeyRegister(RegisterKeyMappingsEvent e) {
