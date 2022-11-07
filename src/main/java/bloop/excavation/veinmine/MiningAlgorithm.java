@@ -8,12 +8,13 @@ import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
 
@@ -109,12 +110,6 @@ public class MiningAlgorithm {
 
         if(!level.isClientSide()) {
             xp = ForgeHooks.onBlockBreakEvent(level, player.gameMode.getGameModeForPlayer(), player, p);
-            if(xp == -1)
-                return false;
-
-            if(!block.onDestroyedByPlayer(state, level, p, player, !player.isCreative(), state.getFluidState()))
-                return false;
-            //block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
 
             if(!player.isCreative()) {
                 if(!Excavation.config.vacuumBlocks.get()) { //Causes extra lag
@@ -130,6 +125,13 @@ public class MiningAlgorithm {
                 if(xp > 0)
                     totalXp += xp;
             }
+
+            if(xp == -1)
+                return false;
+
+            if(!block.onDestroyedByPlayer(state, level, p, player, !player.isCreative(), state.getFluidState()))
+                return false;
+            //block.playerDestroy(world, player, p, state, world.getBlockEntity(p), player.getMainHandItem());
         } else {
             if(!block.onDestroyedByPlayer(state, level, p, player, !player.isCreative(), state.getFluidState()))
                 return false;
@@ -141,17 +143,22 @@ public class MiningAlgorithm {
 
     private void addToDropsList(BlockPos p, Block block, BlockState state) {
         List<ItemStack> drops = block.getDrops(state, (ServerLevel) level, p, level.getBlockEntity(p), player, player.getMainHandItem());
-        List<Item> dummyItemsToDrop = new ArrayList<>();
+        List<ItemStack> dummyItemsToDrop = new ArrayList<>(itemsToDrop);
+        BlockEntity blockEntity = level.getBlockEntity(p);
         int oldCount;
         int extraCount;
 
-        itemsToDrop.forEach(i -> dummyItemsToDrop.add(i.getItem()));
-
         for(ItemStack drop : drops) {
-            if(dummyItemsToDrop.contains(drop.getItem())) {
-                    oldCount = itemsToDrop.get(dummyItemsToDrop.indexOf(drop.getItem())).getCount();
-                    extraCount = drop.getCount();
-                    itemsToDrop.get(dummyItemsToDrop.indexOf(drop.getItem())).setCount(oldCount + extraCount);
+            if(dummyItemsToDrop.contains(drop)) {
+                oldCount = itemsToDrop.get(dummyItemsToDrop.indexOf(drop)).getCount();
+                extraCount = drop.getCount();
+                itemsToDrop.get(dummyItemsToDrop.indexOf(drop)).setCount(oldCount + extraCount);
+            } else if(blockEntity instanceof ShulkerBoxBlockEntity shulkerBoxBlockEntity) {
+                blockEntity.saveToItem(drop);
+                if(shulkerBoxBlockEntity.hasCustomName())
+                    drop.setHoverName(shulkerBoxBlockEntity.getCustomName());
+
+                itemsToDrop.add(drop);
             } else {
                 itemsToDrop.add(drop);
             }
