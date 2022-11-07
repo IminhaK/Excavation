@@ -5,15 +5,10 @@ import bloop.excavation.config.ConfigHelper.ConfigValueListener;
 
 import bloop.excavation.network.ExcavationPacketHandler;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Excavation.MODID)
@@ -26,15 +21,8 @@ public class Excavation {
     public Excavation() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         config = ConfigHelper.register(ModConfig.Type.COMMON, ConfigImplementation::new);
-        DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> clientStart(modEventBus));
 
         ExcavationPacketHandler.registerMessages();
-    }
-
-    private static void clientStart(IEventBus modEventBus) {
-            modEventBus.addListener(EventPriority.NORMAL, false, ColorHandlerEvent.Block.class, setupEvent ->
-                    modEventBus.addListener(EventPriority.NORMAL, false, FMLLoadCompleteEvent.class, fmlLoadCompleteEvent ->
-                            KeyBindings.init()));
     }
 
     public static class ConfigImplementation {
